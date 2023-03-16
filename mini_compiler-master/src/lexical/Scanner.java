@@ -53,8 +53,6 @@ public class Scanner {
 				}else if(isOperator(currentChar)){
 					content += currentChar;
 					state = 5;
-				}else{
-					throw new RuntimeException("is somthing diferent");
 				}
 				break;
 			case 1:
@@ -114,11 +112,16 @@ public class Scanner {
 
 				}	
 				 */
-
+				//indetifica os operadores relacionais
 				case 5:
 					if(invalidCaractere(currentChar)){
 						throw new RuntimeException("Operator rel Malformed!");
+					}else if (this.isAssign(currentChar)){
+						content += currentChar;
 					}else{
+						
+						this.back();
+						return new Token(TokenType.REL_OP, content);
 						
 					}
 				break;

@@ -10,7 +10,11 @@ print
 *
 =
 58
->
->=
-<
-<=
+adfsf>adff
+asdffs>=asfsd
+afsafa<afsf
+adfsafa<=afdsafa
+
+=!
+
+!=
