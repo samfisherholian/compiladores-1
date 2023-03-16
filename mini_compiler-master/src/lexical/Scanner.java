@@ -47,6 +47,14 @@ public class Scanner {
 				}else if(isMathOp(currentChar)){
 					content += currentChar;
 					state = 3;
+				}else if(isAssign(currentChar)){
+					content += currentChar;
+					state = 4;
+				}else if(isOperator(currentChar)){
+					content += currentChar;
+					state = 5;
+				}else{
+					throw new RuntimeException("is somthing diferent");
 				}
 				break;
 			case 1:
@@ -77,6 +85,43 @@ public class Scanner {
 					this.back();
 					return new Token(TokenType.MATH_OP, content);
 				}
+
+			//reconhece o operador '='
+			case 4:
+					// vou ter que criar um metodo pra isso
+				if(!this.isLetter(currentChar) && !this.isDigit(currentChar) && !this.isOperator(currentChar) && !this.isMathOp(currentChar) && !this.isAssign(currentChar) && !this.isSpace(currentChar)){
+					throw new RuntimeException("Operator Assign Malformed!");
+				}else{
+
+					this.back();
+					return new Token(TokenType.ASSINGN, content);
+					
+				}	
+
+				/*
+									if(isLetter(currentChar) && isDigit(currentChar) && isOperator(currentChar) &&isMathOp(currentChar) && isSpace(currentChar)){
+					throw new RuntimeException("Operator Malformed!");
+				}else{
+
+					content += currentChar;
+					state = 4;
+					if(isLetter(currentChar) || isDigit(currentChar) || isSpace(currentChar)){
+						this.back();
+						return new Token(TokenType.ASSINGN, content);
+					}else{
+						throw new RuntimeException("Operator Malformed!");
+					}
+
+				}	
+				 */
+
+				case 5:
+					if(invalidCaractere(currentChar)){
+						throw new RuntimeException("Operator rel Malformed!");
+					}else{
+						
+					}
+				break;
 				
 			}
 		}
@@ -109,6 +154,15 @@ public class Scanner {
 	private boolean isMathOp(char c){
 
 		return c == '+' || c == '-' || c == '*' || c == '/';
+	}
+
+	private boolean isAssign(char c){
+		return c == '=';
+	}
+
+	//verifica se sao invalidos
+	private boolean invalidCaractere(char c){
+		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c) && !this.isAssign(c) && !this.isSpace(c);
 	}
 
 	private boolean isEOF() {
