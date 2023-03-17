@@ -5,9 +5,9 @@ print
 234543534
 
 + 
-/
+afafa/afdfaf
 -
-*
+**
 =
 58
 adfsf>adff
@@ -23,3 +23,8 @@ afdaf(dasfsafas
 
 afsfaff)afasdfasf
 
+20.05
+
+25.0
+
+.055

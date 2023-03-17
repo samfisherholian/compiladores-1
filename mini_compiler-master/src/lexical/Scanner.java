@@ -14,6 +14,7 @@ public class Scanner {
 	int pos;
 	char[] contentTXT;
 	int state;
+	int pointCounter;
 
 	public Scanner(String filename) {
 		try {
@@ -41,26 +42,30 @@ public class Scanner {
 				if (this.isLetter(currentChar)) {
 					content += currentChar;
 					state = 1;
-				} else if (isSpace(currentChar)) {
+				} else if (this.isSpace(currentChar)) {
 					state = 0;
-				} else if (isDigit(currentChar)) {
+				} else if (this.isDigit(currentChar)) {
 					content += currentChar;
 					state = 2;
-				}else if(isMathOp(currentChar)){
+				}else if(this.isMathOp(currentChar)){
 					content += currentChar;
 					state = 3;
-				}else if(isAssign(currentChar)){
+				}else if(this.isAssign(currentChar)){
 					content += currentChar;
 					state = 4;
-				}else if(isOperator(currentChar)){
+				}else if(this.isOperator(currentChar)){
 					content += currentChar;
 					state = 5;
-				}else if(isLefParentese(currentChar)){
+				}else if(this.isLefParentese(currentChar)){
 					content += currentChar;
 					state = 6;
 				}else if(this.isRightParentese(currentChar)){
 					content += currentChar;
 					state = 7;
+				}else if (this.isDot(currentChar)){
+					pointCounter++;
+					content += currentChar;
+					state = 2;
 				}
 				break;
 			case 1:
@@ -73,19 +78,44 @@ public class Scanner {
 				}
 				break;
 			case 2:
-				if(isDigit(currentChar)) {
+				if(this.isDigit(currentChar)) {
 					content += currentChar;
 					state = 2;
-				} else if(isLetter(currentChar)) {
+				
+				}else if(this.isLetter(currentChar)) {
 					throw new RuntimeException("Number Malformed!");
-				} else {
+
+				//se for um '.' incrementa o contador de ponteiro e vai para o proximo caractere
+				} else if(this.isDot(currentChar)){
+					pointCounter++;
+					content += currentChar;
+
+				// logica dos numeros reais adicionada aqui
+				//se tiver um '.' vai verificar se tem mais de 1 ponto
+				// e se o conteudo termina com ponto		
+				} else if(content.contains(".")){
+					
+					if(pointCounter > 1 || content.endsWith(".")){
+						throw new RuntimeException("Real Number Malformed! in " + content);
+
+					}else{
+						pointCounter = 0;
+						this.back();
+						return new Token(TokenType.REALNUMBER, content);
+					}
+
+					
+				}else{
+
+					
 					this.back();
 					return new Token(TokenType.NUMBER, content);
 				}
+				//pointCounter = 0;
 				break;
 			//verifica um operador matematico	
 			case 3:
-				if(isDigit(currentChar) || isLetter(currentChar)){
+				if(this.invalidCaractere(currentChar)){
 					throw new RuntimeException("Operator Malformed!");
 				}else{
 					this.back();
@@ -122,7 +152,7 @@ public class Scanner {
 				 */
 				//indetifica os operadores relacionais
 				case 5:
-					if(invalidCaractere(currentChar)){
+					if(this.invalidCaractere(currentChar)){
 						throw new RuntimeException("Operator rel Malformed!");
 					}else if (this.isAssign(currentChar)){
 						content += currentChar;
@@ -194,8 +224,10 @@ public class Scanner {
 	}
 
 	//verifica se sao invalidos
+	//se todos forem invalidos
 	private boolean invalidCaractere(char c){
-		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c) && !this.isAssign(c) && !this.isSpace(c);
+		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c) && !this.isAssign(c) && !this.isSpace(c) &&
+		!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c);
 	}
 
 	private boolean isLefParentese(char c){
@@ -209,6 +241,10 @@ public class Scanner {
 
 		return c == ')';
 
+	}
+
+	private boolean isDot(char c){
+		return c == '.';
 	}
 
 	private boolean isEOF() {
