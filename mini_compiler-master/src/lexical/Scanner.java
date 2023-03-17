@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.management.RuntimeErrorException;
+
 import utils.TokenType;
 
 public class Scanner {
@@ -53,6 +55,12 @@ public class Scanner {
 				}else if(isOperator(currentChar)){
 					content += currentChar;
 					state = 5;
+				}else if(isLefParentese(currentChar)){
+					content += currentChar;
+					state = 6;
+				}else if(this.isRightParentese(currentChar)){
+					content += currentChar;
+					state = 7;
 				}
 				break;
 			case 1:
@@ -125,7 +133,29 @@ public class Scanner {
 						
 					}
 				break;
-				
+				//verifica se eh um parentese do lado esquerdo
+				case 6:
+					
+					if(this.invalidCaractere(currentChar)){
+						throw new RuntimeException("Left Parentese Malformed!");
+					//se o carcetere n tiver atingido o fim do arquivo entao
+					//volta	
+					}else if(!this.isEOF()){
+						this.back();
+					}
+
+						return new Token(TokenType.LEFTPAR, content);
+				//verifica se eh um parenteses do lado direito
+				case 7:
+
+					if(this.invalidCaractere(currentChar)){
+						throw new RuntimeException("Right Parentese Malformed!");
+
+					}else if(!this.isEOF()){
+						this.back();
+					}
+
+						return new Token(TokenType.RIGHTPAR, content);
 			}
 		}
 	}
@@ -166,6 +196,19 @@ public class Scanner {
 	//verifica se sao invalidos
 	private boolean invalidCaractere(char c){
 		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c) && !this.isAssign(c) && !this.isSpace(c);
+	}
+
+	private boolean isLefParentese(char c){
+
+		return c == '(';
+
+	}
+
+	private boolean isRightParentese(char c){
+
+
+		return c == ')';
+
 	}
 
 	private boolean isEOF() {
