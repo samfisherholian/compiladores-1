@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.management.RuntimeErrorException;
 
@@ -15,6 +16,8 @@ public class Scanner {
 	char[] contentTXT;
 	int state;
 	int pointCounter;
+
+	String[] keyWords = {"print", "int", "float", "if", "else"};
 
 	public Scanner(String filename) {
 		try {
@@ -73,6 +76,15 @@ public class Scanner {
 					content += currentChar;
 					state = 1;
 				} else {
+					//verifica se tem palavras reservadas
+					for(int i = 0;i < keyWords.length; i++){
+
+						if(keyWords[i].equals(content)){
+							this.back();
+							return new Token(TokenType.KEYWORD, content);	
+						}
+					}
+
 					this.back();
 					return new Token(TokenType.IDENTYFIER, content);
 				}
@@ -111,7 +123,6 @@ public class Scanner {
 					this.back();
 					return new Token(TokenType.NUMBER, content);
 				}
-				//pointCounter = 0;
 				break;
 			//verifica um operador matematico	
 			case 3:
@@ -154,6 +165,8 @@ public class Scanner {
 				case 5:
 					if(this.invalidCaractere(currentChar)){
 						throw new RuntimeException("Operator rel Malformed!");
+					//se tiver um operador de atribuicao entao adiciona ao operador relacional
+					// <= ou >=	
 					}else if (this.isAssign(currentChar)){
 						content += currentChar;
 					}else{
@@ -168,10 +181,7 @@ public class Scanner {
 					
 					if(this.invalidCaractere(currentChar)){
 						throw new RuntimeException("Left Parentese Malformed!");
-					//se o carcetere n tiver atingido o fim do arquivo entao
-					//volta	
-					}else if(!this.isEOF()){
-						this.back();
+
 					}
 
 						return new Token(TokenType.LEFTPAR, content);
@@ -181,10 +191,7 @@ public class Scanner {
 					if(this.invalidCaractere(currentChar)){
 						throw new RuntimeException("Right Parentese Malformed!");
 
-					}else if(!this.isEOF()){
-						this.back();
 					}
-
 						return new Token(TokenType.RIGHTPAR, content);
 			}
 		}
@@ -226,7 +233,8 @@ public class Scanner {
 	//verifica se sao invalidos
 	//se todos forem invalidos
 	private boolean invalidCaractere(char c){
-		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c) && !this.isAssign(c) && !this.isSpace(c) &&
+		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c)
+		&& !this.isAssign(c) && !this.isSpace(c) &&
 		!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c);
 	}
 

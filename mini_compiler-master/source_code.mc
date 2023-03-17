@@ -1,5 +1,6 @@
 x y soma1
 1 2 
+
 print
 25
 234543534
@@ -28,3 +29,12 @@ afsfaff)afasdfasf
 25.0
 
 .055
+
+else
+
+
+if
+
+float
+
+int
