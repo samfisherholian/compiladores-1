@@ -69,7 +69,15 @@ public class Scanner {
 					pointCounter++;
 					content += currentChar;
 					state = 2;
+				}else if(this.isComment(currentChar)){
+					
+					//n consegui achar outra solução pra isso
+					do{
+						currentChar = this.nextChar();
+					}while(currentChar != '\n');					
+
 				}
+
 				break;
 			case 1:
 				if (this.isLetter(currentChar) || this.isDigit(currentChar)) {
@@ -162,42 +170,46 @@ public class Scanner {
 				}	
 				 */
 				//indetifica os operadores relacionais
-				case 5:
-					if(this.invalidCaractere(currentChar)){
-						throw new RuntimeException("Operator rel Malformed!");
-					//se tiver um operador de atribuicao entao adiciona ao operador relacional
-					// <= ou >=	
-					}else if (this.isAssign(currentChar)){
-						content += currentChar;
-					}else{
-						
+			case 5:
+				if(this.invalidCaractere(currentChar)){
+					throw new RuntimeException("Operator rel Malformed!");
+				//se tiver um operador de atribuicao entao adiciona ao operador relacional
+				// <= ou >=	
+				}else if (this.isAssign(currentChar)){
+					content += currentChar;
+				}else{
+					
 						this.back();
 						return new Token(TokenType.REL_OP, content);
 						
 					}
 				break;
-				//verifica se eh um parentese do lado esquerdo
-				case 6:
-					
-					if(this.invalidCaractere(currentChar)){
-						throw new RuntimeException("Left Parentese Malformed!");
+			//verifica se eh um parentese do lado esquerdo
+			case 6:
+				
+				if(this.invalidCaractere(currentChar)){
+					throw new RuntimeException("Left Parentese Malformed!");
 
-					}
+				}
 
-						return new Token(TokenType.LEFTPAR, content);
-				//verifica se eh um parenteses do lado direito
-				case 7:
+					return new Token(TokenType.LEFTPAR, content);
+			//verifica se eh um parenteses do lado direito
+			case 7:
 
-					if(this.invalidCaractere(currentChar)){
-						throw new RuntimeException("Right Parentese Malformed!");
+				if(this.invalidCaractere(currentChar)){
+					throw new RuntimeException("Right Parentese Malformed!");
 
-					}
-						return new Token(TokenType.RIGHTPAR, content);
+				}
+					return new Token(TokenType.RIGHTPAR, content);
+
 			}
 		}
 	}
 
 	private char nextChar() {
+		if(this.isEOF()){
+			return '\0';
+		}
 		return this.contentTXT[this.pos++];
 	}
 
@@ -253,6 +265,10 @@ public class Scanner {
 
 	private boolean isDot(char c){
 		return c == '.';
+	}
+	
+	private boolean isComment(char c){
+		return c == '#';
 	}
 
 	private boolean isEOF() {
