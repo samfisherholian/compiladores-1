@@ -19,6 +19,8 @@ public class Scanner {
 
 	String[] keyWords = {"print", "int", "float", "if", "else"};
 
+	LineColum contadorLC = new LineColum();
+
 	public Scanner(String filename) {
 		try {
 			String contentBuffer = new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
@@ -39,6 +41,8 @@ public class Scanner {
 				return null;
 			}
 			currentChar = this.nextChar();
+
+			contadorLC.countLineAndColum(currentChar);
 
 			switch (state) {
 			case 0:
@@ -69,18 +73,25 @@ public class Scanner {
 					pointCounter++;
 					content += currentChar;
 					state = 2;
+				}else if(this.isBarorUndescore(currentChar)){
+					content+=currentChar;
+					state = 1;
 				}else if(this.isComment(currentChar)){
 					
-					//n consegui achar outra solução pra isso
+					//ignora os caracteres apos ver o '#' ate chegar ao fim da linha '\n'
 					do{
 						currentChar = this.nextChar();
+						contadorLC.countLineAndColum(currentChar);
 					}while(currentChar != '\n');					
+
+				}else{
+					throw new RuntimeException(error() +"symbol not regonized");
 
 				}
 
 				break;
 			case 1:
-				if (this.isLetter(currentChar) || this.isDigit(currentChar)) {
+				if (this.isLetter(currentChar) || this.isDigit(currentChar) || this.isBarorUndescore(currentChar)) {
 					content += currentChar;
 					state = 1;
 				} else {
@@ -88,12 +99,12 @@ public class Scanner {
 					for(int i = 0;i < keyWords.length; i++){
 
 						if(keyWords[i].equals(content)){
-							this.back();
+							this.back(currentChar);
 							return new Token(TokenType.KEYWORD, content);	
 						}
 					}
 
-					this.back();
+					this.back(currentChar);
 					return new Token(TokenType.IDENTYFIER, content);
 				}
 				break;
@@ -103,9 +114,9 @@ public class Scanner {
 					state = 2;
 				
 				}else if(this.isLetter(currentChar)) {
-					throw new RuntimeException("Number Malformed!");
+					throw new RuntimeException(error() +"Number Malformed!");
 
-				//se for um '.' incrementa o contador de ponteiro e vai para o proximo caractere
+				//se for um '.' incrementa o contador de ponteiro e adiciona no conteudo
 				} else if(this.isDot(currentChar)){
 					pointCounter++;
 					content += currentChar;
@@ -116,11 +127,11 @@ public class Scanner {
 				} else if(content.contains(".")){
 					
 					if(pointCounter > 1 || content.endsWith(".")){
-						throw new RuntimeException("Real Number Malformed! in " + content);
+						throw new RuntimeException(error() +"Real Number Malformed! in ");
 
 					}else{
 						pointCounter = 0;
-						this.back();
+						this.back(currentChar);
 						return new Token(TokenType.REALNUMBER, content);
 					}
 
@@ -128,58 +139,42 @@ public class Scanner {
 				}else{
 
 					
-					this.back();
+					this.back(currentChar);
 					return new Token(TokenType.NUMBER, content);
 				}
 				break;
 			//verifica um operador matematico	
 			case 3:
 				if(this.invalidCaractere(currentChar)){
-					throw new RuntimeException("Operator Malformed!");
+					throw new RuntimeException(error() +"Operator Malformed!");
 				}else{
-					this.back();
+					this.back(currentChar);
 					return new Token(TokenType.MATH_OP, content);
 				}
 
 			//reconhece o operador '='
 			case 4:
-					// vou ter que criar um metodo pra isso
-				if(!this.isLetter(currentChar) && !this.isDigit(currentChar) && !this.isOperator(currentChar) && !this.isMathOp(currentChar) && !this.isAssign(currentChar) && !this.isSpace(currentChar)){
-					throw new RuntimeException("Operator Assign Malformed!");
+					
+				if(this.invalidCaractere(currentChar)){
+					throw new RuntimeException(error() +"Operator Assign Malformed!");
 				}else{
 
-					this.back();
+					this.back(currentChar);
 					return new Token(TokenType.ASSINGN, content);
 					
 				}	
 
-				/*
-									if(isLetter(currentChar) && isDigit(currentChar) && isOperator(currentChar) &&isMathOp(currentChar) && isSpace(currentChar)){
-					throw new RuntimeException("Operator Malformed!");
-				}else{
-
-					content += currentChar;
-					state = 4;
-					if(isLetter(currentChar) || isDigit(currentChar) || isSpace(currentChar)){
-						this.back();
-						return new Token(TokenType.ASSINGN, content);
-					}else{
-						throw new RuntimeException("Operator Malformed!");
-					}
-
-				}	
-				 */
 				//indetifica os operadores relacionais
 			case 5:
 				if(this.invalidCaractere(currentChar)){
-					throw new RuntimeException("Operator rel Malformed!");
+					throw new RuntimeException(error() +"Operator rel Malformed!");
 				//se tiver um operador de atribuicao entao adiciona ao operador relacional
 				// <= ou >=	
 				}else if (this.isAssign(currentChar)){
 					content += currentChar;
 				}else{
 					
-						this.back();
+						this.back(currentChar);
 						return new Token(TokenType.REL_OP, content);
 						
 					}
@@ -188,7 +183,7 @@ public class Scanner {
 			case 6:
 				
 				if(this.invalidCaractere(currentChar)){
-					throw new RuntimeException("Left Parentese Malformed!");
+					throw new RuntimeException(error() +"Left Parentese Malformed!");
 
 				}
 
@@ -197,7 +192,7 @@ public class Scanner {
 			case 7:
 
 				if(this.invalidCaractere(currentChar)){
-					throw new RuntimeException("Right Parentese Malformed!");
+					throw new RuntimeException(error() +"Right Parentese Malformed!");
 
 				}
 					return new Token(TokenType.RIGHTPAR, content);
@@ -207,13 +202,21 @@ public class Scanner {
 	}
 
 	private char nextChar() {
-		if(this.isEOF()){
-			return '\0';
-		}
+
 		return this.contentTXT[this.pos++];
 	}
 
-	private void back() {
+	private void back(char c) {
+
+		if(c != '\n') {
+
+			contadorLC.decrementeColumn();
+
+		}else{
+
+			contadorLC.decrementLine();
+		}
+
 		this.pos--;
 	}
 
@@ -269,6 +272,16 @@ public class Scanner {
 	
 	private boolean isComment(char c){
 		return c == '#';
+	}
+
+	private boolean isBarorUndescore(char c){
+
+		return c == '-' || c == '_';
+	}
+
+
+	private String error(){
+		return "erro in line "+ contadorLC.getLine() +" column "+ contadorLC.getColum();
 	}
 
 	private boolean isEOF() {
