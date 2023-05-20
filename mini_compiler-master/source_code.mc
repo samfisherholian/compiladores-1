@@ -1,4 +1,4 @@
-x y 9soma1
+x y som
 1 2 
 
 casa_amarela
@@ -18,9 +18,16 @@ asdffs>=asfsd
 afsafa<afsf
 adfsafa<=afdsafa
 
-=!
 
 !=
+
+
+=
+>
+<
+<=
+
+>=
 
 afdaf(dasfsafas
 
@@ -31,6 +38,7 @@ afsfaff)afasdfasf
 25.0
 
 .055
+
 
 
 

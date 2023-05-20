@@ -94,7 +94,9 @@ public class Scanner {
 				if (this.isLetter(currentChar) || this.isDigit(currentChar) || this.isBarorUndescore(currentChar)) {
 					content += currentChar;
 					state = 1;
-				} else {
+				} else if (invalidCaractere(currentChar) || isDot(currentChar)){
+					throw new RuntimeException(error() +" Indentifyer Malformed!");
+				}else{
 					//verifica se tem palavras reservadas
 					for(int i = 0;i < keyWords.length; i++){
 
@@ -127,6 +129,8 @@ public class Scanner {
 				} else if(content.contains(".")){
 					
 					if(pointCounter > 1 || content.endsWith(".")){
+
+						
 						throw new RuntimeException(error() +" Real Number Malformed! in ");
 
 					}else{
@@ -157,7 +161,7 @@ public class Scanner {
 					
 				if(this.invalidCaractere(currentChar)){
 					throw new RuntimeException(error() +" Operator Assign Malformed!");
-				}else{
+				}else {
 
 					this.back(currentChar);
 					return new Token(TokenType.ASSINGN, content);
@@ -172,7 +176,10 @@ public class Scanner {
 				// <= ou >=	
 				}else if (this.isAssign(currentChar)){
 					content += currentChar;
-				}else{
+				}else if(content.endsWith("!")){
+					throw new RuntimeException(error() +" Operator rel Malformed!");
+				}
+				else{
 					
 						this.back(currentChar);
 						return new Token(TokenType.REL_OP, content);
@@ -208,6 +215,8 @@ public class Scanner {
 	}
 
 	private void back(char c) {
+
+		//this.pos--;
 
 		if(c != '\n') {
 

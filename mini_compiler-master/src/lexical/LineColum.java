@@ -8,7 +8,7 @@ public class LineColum {
 
     
     public LineColum() {
-        this.line = 1;
+        this.line = 0;
         this.colum = 0;
     }
 
@@ -41,7 +41,7 @@ public class LineColum {
 
 
     public int getLine() {
-        return line;
+        return line + 1;
     }
 
 
