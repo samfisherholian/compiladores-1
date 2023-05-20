@@ -21,8 +21,9 @@ public class LineColum {
             this.colum++;
             
         }else{
-            this.line++;
+
             this.colum = 0;
+            this.line++;
         }
 
 
