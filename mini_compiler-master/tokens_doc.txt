@@ -21,4 +21,7 @@ RIGHTPAR:
 REALNUMBER:
 	.
 KEYWORD:
-	print | float | int | if | else				
+	PRINT | INT | FLOAT | IF | ELSE | THEN | TO | DECLARACOES | ALGORITMO	
+
+TWOPOINTS:
+	:			

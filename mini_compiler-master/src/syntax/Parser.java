@@ -13,11 +13,67 @@ public class Parser {
 		this.scanner = scanner;
 	}
 
-	public void E() {
-		T();
-		El();
+//	public void E() {
+		//T();
+		//El();
+		//program();
+	//}
+
+	//programa
+	public void program(){
+		this.token = this.scanner.nextToken();
+		if(this.token.getType() != TokenType.TWOPOINTS ){
+			throw new SyntaxException("Expected ':', found " + token.getType());
+		}
+		this.token = this.scanner.nextToken();
+		if(!this.token.getContent().equals("DECLARACOES")){
+			throw new SyntaxException("Expected 'DECLARACOES', found " + token.getType());
+		}
+		
+		listaDeclaracoes();
+		//quando sai de listaDeclaracoes o token sai como null entao tem que verificar aqui
+		if(this.token != null){
+
+			this.token = this.scanner.nextToken();
+			if(!this.token.getContent().equals("ALGORITMO")){
+				throw new SyntaxException("Expected 'ALGORITMO', found " + token.getType());
+			}
+		}	
 	}
 
+	public void listaDeclaracoes(){
+		this.token = this.scanner.nextToken();		
+		if(this.token != null){		
+			declaracao();
+			listaDeclaracoes();
+		}
+
+	}
+
+	public void declaracao(){
+		tipoVar();
+		this.token = this.scanner.nextToken();
+		//reconhce os dois pontos
+		if(this.token.getType() != TokenType.TWOPOINTS ){
+			throw new SyntaxException("Expected ':', found " + token.getType());
+		}
+
+		this.token = this.scanner.nextToken();
+		if(this.token.getType() != TokenType.IDENTYFIER){
+			throw new SyntaxException("Identyfier or Number expected, found " + token.getType());
+		}
+
+
+	}
+
+	public void tipoVar(){
+		//this.token = this.scanner.nextToken();
+		if(!this.token.getContent().equals("INTEIRO") && !this.token.getContent().equals("REAL")){
+			throw new SyntaxException("Expected 'INTEIRO' OR 'REAL' but, found " + token.getContent());
+		}
+
+	}
+ /* 
 	private void El() {
 		this.token = this.scanner.nextToken();
 		if (this.token != null) {
@@ -40,5 +96,5 @@ public class Parser {
 		}
 
 	}
-
+*/
 }

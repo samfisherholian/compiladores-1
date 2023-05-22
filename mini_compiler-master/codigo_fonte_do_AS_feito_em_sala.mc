@@ -1,1 +1,7 @@
-soma=x>y
+
+:DECLARACOES
+
+INTEIRO:numero1
+REAL:numero2
+
+
