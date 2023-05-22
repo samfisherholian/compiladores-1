@@ -87,6 +87,9 @@ public class Scanner {
 				}else if(this.isTwopoints(currentChar)){
 					content += currentChar;
 					state = 8;
+				}else if(this.isPointcolon(currentChar)){
+					content += currentChar;
+					state = 9;
 				}else{
 					throw new RuntimeException(error() +" symbol not regonized");
 
@@ -214,7 +217,14 @@ public class Scanner {
 
 					this.back(currentChar);
 					return new Token(TokenType.TWOPOINTS, content);
+			case 9:
+				if(this.invalidCaractere(currentChar)){
+					throw new RuntimeException(error() +" twopoints Malformed!");
+				}
 
+					this.back(currentChar);
+					return new Token(TokenType.PONTOVIRGULA, content);
+					
 			}
 		}
 	}
@@ -270,7 +280,8 @@ public class Scanner {
 	private boolean invalidCaractere(char c){
 		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c)
 		&& !this.isAssign(c) && !this.isSpace(c) &&
-		!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c) && !this.isTwopoints(c);
+		!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c) && !this.isTwopoints(c)
+		&& !this.isPointcolon(c);
 	}
 
 	private boolean isLefParentese(char c){
@@ -302,6 +313,9 @@ public class Scanner {
 	private boolean isTwopoints(char c){
 		return c == ':';
 	}
+	 private boolean isPointcolon(char c){
+		return c == ';';
+	 }
 
 
 	private String error(){

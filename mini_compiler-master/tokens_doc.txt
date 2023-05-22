@@ -25,3 +25,5 @@ KEYWORD:
 
 TWOPOINTS:
 	:			
+PONTOVIRGULA:
+	;	

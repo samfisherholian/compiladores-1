@@ -1,7 +1,10 @@
 
 :DECLARACOES
 
-INTEIRO:numero1
-REAL:numero2
+INTEIRO:numero1;
+REAL:numero2;
+
+
+
 
 
