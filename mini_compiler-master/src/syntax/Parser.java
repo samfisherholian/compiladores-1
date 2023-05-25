@@ -50,6 +50,8 @@ public class Parser {
 			if(!this.token.getContent().equals("ALGORITMO")){
 				throw new SyntaxException("Expected 'ALGORITMO', found " + token.getType());
 			}
+
+			
 		}	
 	}
 
