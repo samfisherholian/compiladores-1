@@ -1,5 +1,7 @@
 package syntax;
 
+import java.security.cert.PolicyNode;
+
 import exceptions.SyntaxException;
 import lexical.Scanner;
 import lexical.Token;
@@ -98,6 +100,10 @@ public class Parser {
 	}
 
 	public void comandos() {
+
+		if(this.token.getContent().equals("ASSIGN")){
+			comandoAtribuicao();
+		}
 		if (this.token.getContent().equals("INPUT")){
 			comandoEntrada();
 		}
@@ -110,6 +116,107 @@ public class Parser {
 			//&& !this.token.getContent().equals("ELSE") && !this.token.getContent().equals("WHILE")
 			throw new SyntaxException("Expected 'Command' but, found " + token.getContent());
 		}
+	}
+
+	public void comandoAtribuicao(){
+		this.nextoken();
+		if(this.token.getType() != TokenType.IDENTYFIER){
+			experssaoAritimetica();
+		}
+
+		this.nextoken();
+		if(!this.token.getContent().equals("TO")){
+			throw new SyntaxException("Expected 'TO' but, found " + token.getContent());
+		}
+
+		this.nextoken();
+
+		if(this.token.getType() != TokenType.IDENTYFIER){
+			throw new SyntaxException("Expected 'IDENTYFIER' but, found " + token.getContent());
+		}
+		this.nextoken();
+		this.ponVirgula();
+		this.nextoken();
+
+	}
+
+	public void experssaoAritimetica(){
+		//this.nextoken();
+		termoAritimetico();
+		experssaoAritimetica2();
+	}
+
+	public void termoAritimetico(){
+		fatorAritimetico();
+		termoAritimetico2();
+	}
+
+	public void fatorAritimetico(){
+
+		if(this.token.getType() != TokenType.NUMBER && this.token.getType() != TokenType.REALNUMBER && this.token.getType() != TokenType.IDENTYFIER && this.token.getType() != TokenType.MATH_OP){
+
+			if(this.token.getType() != TokenType.LEFTPAR){
+				throw new SyntaxException("Expected '(' but, found " + token.getContent());
+			}
+				//this.nextoken();
+				this.experssaoAritimetica();
+
+			if(this.token.getType() != TokenType.RIGHTPAR){
+				throw new SyntaxException("Expected ')' but, found " + token.getContent());
+			}
+		}	
+
+		
+	}
+
+	public void termoAritimetico2(){
+
+		this.nextoken();
+		if(this.token.getType() != TokenType.PONTOVIRGULA && this.token != null){
+			termoAritimetico3();
+			termoAritimetico2();
+		}
+	}
+
+	public void termoAritimetico3(){
+
+
+		if(!this.token.getContent().equals("*") && !this.token.getContent().equals("/")){
+			throw new SyntaxException("Expected '*' or '/' but, found " + token.getContent());
+		}
+
+		this.fatorAritimetico();
+
+		//this.nextoken();
+		/*if(!this.token.getContent().equals("*") && !this.token.getContent().equals("/")){
+
+			if(!this.token.getContent().equals("+") && !this.token.getContent().equals("-")){
+				throw new SyntaxException("Expected '*' or '/' but, found " + token.getContent());
+			}
+			
+
+			this.nextoken();
+			fatorAritimetico();
+		}
+		this.nextoken();
+		fatorAritimetico();
+*/
+		
+	}
+
+	public void experssaoAritimetica2(){
+		if(this.token.getType() != TokenType.PONTOVIRGULA){
+			expressaoAritimetica3();
+			experssaoAritimetica2();
+		}
+	}
+
+	public void expressaoAritimetica3(){
+		if(!this.token.getContent().equals("+") && !this.token.getContent().equals("-")){
+			throw new SyntaxException("Expected '+' or '-' but, found " + token.getContent());
+		}
+
+		termoAritimetico();
 	}
 
 	public void comandoEntrada(){

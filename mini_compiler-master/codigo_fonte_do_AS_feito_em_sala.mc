@@ -5,7 +5,8 @@ INTEIRO :numero1;
 
 :ALGORITMO
 
-INPUT numero1;
-PRINT (numero1);
+ASSIGN 2*5-1 TO aux;
+
+PRINT(NUMERO1);
 
 
