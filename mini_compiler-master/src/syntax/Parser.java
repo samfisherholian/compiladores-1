@@ -47,7 +47,7 @@ public class Parser {
 	}
 
 	public void listaDeclaracoes() {
-		this.nextoken();
+		this.nextoken();       //vendo se ta pegando agr essa branch aqui
 		if (this.token.getType() != TokenType.TWOPOINTS) {
 			declaracao();
 			listaDeclaracoes();
