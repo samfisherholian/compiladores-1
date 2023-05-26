@@ -116,6 +116,7 @@ public class Parser {
 			//&& !this.token.getContent().equals("ELSE") && !this.token.getContent().equals("WHILE")
 			throw new SyntaxException("Expected 'Command' but, found " + token.getContent());
 		}
+		
 	}
 
 	public void comandoAtribuicao(){
@@ -124,7 +125,12 @@ public class Parser {
 			experssaoAritimetica();
 		}
 
-		this.nextoken();
+
+
+		if(this.token.getType() != TokenType.KEYWORD){
+			this.nextoken();
+		}
+		
 		if(!this.token.getContent().equals("TO")){
 			throw new SyntaxException("Expected 'TO' but, found " + token.getContent());
 		}
@@ -138,12 +144,14 @@ public class Parser {
 		this.ponVirgula();
 		this.nextoken();
 
+		//this.comandos(); toda vez q terminar o comando tem chamar a funcao comando pq o comando pode ser chamado mais de uma vez
+
 	}
 
 	public void experssaoAritimetica(){
 		//this.nextoken();
 		termoAritimetico();
-		experssaoAritimetica2();
+		//experssaoAritimetica2();
 	}
 
 	public void termoAritimetico(){
@@ -158,21 +166,25 @@ public class Parser {
 			if(this.token.getType() != TokenType.LEFTPAR){
 				throw new SyntaxException("Expected '(' but, found " + token.getContent());
 			}
-				//this.nextoken();
-				this.experssaoAritimetica();
+				
+				if(this.token.getType() != TokenType.IDENTYFIER){
+					this.nextoken();
+					this.experssaoAritimetica();
+				}
+				
 
 			if(this.token.getType() != TokenType.RIGHTPAR){
 				throw new SyntaxException("Expected ')' but, found " + token.getContent());
 			}
 		}	
 
-		
+		this.nextoken();		
 	}
 
 	public void termoAritimetico2(){
 
-		this.nextoken();
-		if(this.token.getType() != TokenType.PONTOVIRGULA && this.token != null){
+		//this.nextoken();
+		if(this.token != null && !this.token.getContent().equals("TO") && this.token.getType() != TokenType.RIGHTPAR){
 			termoAritimetico3();
 			termoAritimetico2();
 		}
@@ -180,12 +192,17 @@ public class Parser {
 
 	public void termoAritimetico3(){
 
-
+		//this.nextoken();
 		if(!this.token.getContent().equals("*") && !this.token.getContent().equals("/")){
-			throw new SyntaxException("Expected '*' or '/' but, found " + token.getContent());
-		}
 
-		this.fatorAritimetico();
+			if(!this.token.getContent().equals("+") && !this.token.getContent().equals("-")){
+				throw new SyntaxException("Expected '*' or '/' but, found " + token.getContent());
+			}
+			
+		}
+		//this.expressaoAritimetica3();
+		this.nextoken();
+		this.termoAritimetico();
 
 		//this.nextoken();
 		/*if(!this.token.getContent().equals("*") && !this.token.getContent().equals("/")){
@@ -205,6 +222,7 @@ public class Parser {
 	}
 
 	public void experssaoAritimetica2(){
+		this.nextoken();
 		if(this.token.getType() != TokenType.PONTOVIRGULA){
 			expressaoAritimetica3();
 			experssaoAritimetica2();
@@ -248,6 +266,7 @@ public class Parser {
 
 		this.nextoken();
 		this.ponVirgula();
+		//this.nextoken(); //no futuro chama isso quando tiver mais comandos
 	}
 
 	public void comandoCondicaoIF() {
