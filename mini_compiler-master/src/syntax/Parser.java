@@ -101,6 +101,10 @@ public class Parser {
 
 	public void comandos() {
 
+		if(this.token.getContent().equals("IF")){
+			comandoCondicaoIF();
+			this.nextoken();
+		}
 		if(this.token.getContent().equals("ASSIGN")){
 			comandoAtribuicao();
 		}
@@ -110,12 +114,13 @@ public class Parser {
 		else if (this.token.getContent().equals("PRINT")){
 			comandoSaida();
 		}
-		else {
+		//removi o else por enquanto
+	//	else {
 			//tipoComando();
 			//!this.token.getContent().equals("ASSING")  && !this.token.getContent().equals("IF")
 			//&& !this.token.getContent().equals("ELSE") && !this.token.getContent().equals("WHILE")
-			throw new SyntaxException("Expected 'Command' but, found " + token.getContent());
-		}
+			//throw new SyntaxException("Expected 'Command' but, found " + token.getContent());
+		//}
 		
 	}
 
@@ -184,7 +189,9 @@ public class Parser {
 	public void termoAritimetico2(){
 
 		//this.nextoken();
-		if(this.token != null && !this.token.getContent().equals("TO") && this.token.getType() != TokenType.RIGHTPAR){
+		if(this.token != null && !this.token.getContent().equals("TO") && this.token.getType() != TokenType.RIGHTPAR 
+		&& this.token.getType() != TokenType.REL_OP && this.token.getType() != TokenType.KEYWORD
+		&& !this.token.getContent().equals("AND") && !this.token.getContent().equals("OR")){
 			termoAritimetico3();
 			termoAritimetico2();
 		}
@@ -269,8 +276,78 @@ public class Parser {
 		//this.nextoken(); //no futuro chama isso quando tiver mais comandos
 	}
 
+	public void expressaoRelacional(){
+		this.termoRelacional();
+		this.expressaoRelacional2();
+	}
+
+	public void termoRelacional(){
+
+		if(this.token.getType() == TokenType.LEFTPAR){
+		
+				
+				if(this.token.getType() != TokenType.IDENTYFIER){
+					this.nextoken();
+					this.expressaoRelacional();
+				}
+				
+
+			if(this.token.getType() != TokenType.RIGHTPAR){
+				throw new SyntaxException("Expected ')' but, found " + token.getContent());
+			}
+		}
+		this.experssaoAritimetica();
+		this.operadorRelacional();
+		this.nextoken();
+		this.experssaoAritimetica();
+		
+	//	if(this.token.getType() != TokenType.IDENTYFIER){
+			//this.experssaoAritimetica();
+		//}
+		//this.nextoken();
+
+		//this.operadorRelacional();
+		//this.nextoken();
+	}
+
+	public void operadorRelacional(){
+		if(this.token.getType() != TokenType.REL_OP){
+			throw new SyntaxException("Relational operator expected, but found " + token.getContent());
+		}
+	}
+
+	public void expressaoRelacional2(){
+		//this.nextoken();
+		if(this.token != null && this.token.getType() != TokenType.KEYWORD){
+			this.operadorBooleano();
+			this.expressaoRelacional();
+		}
+
+	}
+
+	public void operadorBooleano(){
+		
+		if(!this.token.getContent().equals("AND") && !this.token.getContent().equals("OR")){
+			throw new SyntaxException("Relational operator expected, but found " + token.getContent());
+		}
+
+		this.nextoken();
+
+		//this.expressaoRelacional();
+
+	}
+
 	public void comandoCondicaoIF() {
 		// implementar expressaoRelacional 
+		this.nextoken();
+		//if(this.token.getType() != TokenType.IDENTYFIER){
+			this.expressaoRelacional();
+		//}
+
+
+		this.nextoken();
+		
+		
 	}
 
 	public void comandoCondicaoELSE() {

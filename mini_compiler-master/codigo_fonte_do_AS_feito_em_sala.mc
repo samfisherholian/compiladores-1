@@ -1,11 +1,13 @@
 :DECLARACOES
 
 INTEIRO :numero1;
-#REAL:numero2;
+REAL:numero2;
 
 :ALGORITMO
 
-ASSIGN 2*5 TO aux;
+#ASSIGN 2*5 TO aux;
+
+IF 4 < 5 AND 3 > 2 THEN; 
 
 PRINT(NUMERO1);
 
