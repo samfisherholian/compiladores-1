@@ -101,19 +101,30 @@ public class Parser {
 
 	public void comandos() {
 
-		if(this.token.getContent().equals("IF")){
-			comandoCondicaoIF();
-			this.nextoken();
-		}
-		if(this.token.getContent().equals("ASSIGN")){
-			comandoAtribuicao();
-		}
-		if (this.token.getContent().equals("INPUT")){
-			comandoEntrada();
-		}
-		else if (this.token.getContent().equals("PRINT")){
-			comandoSaida();
-		}
+		if(this.token != null){
+
+			if(this.token.getContent().equals("IF") && this.token != null){
+				comandoCondicaoIF();
+				this.nextoken();
+			}
+			if(this.token.getContent().equals("ASSIGN") && this.token != null){
+				comandoAtribuicao();
+			}
+			if (this.token.getContent().equals("INPUT") && this.token != null){
+				comandoEntrada();
+			}
+			if (this.token.getContent().equals("PRINT") && this.token != null){
+				comandoSaida();
+			}
+			if(this.token.getContent().equals("ELSE") && this.token != null){
+				this.comandoCondicao2();
+			}
+		}else{
+
+			//quando ele ler o arquivo todo o token fica null, mas msm assim ele verificou todo o arquivo e n encontrou erro
+			System.out.println("Compilation successful!");
+			System.exit(0);
+		}	
 		//removi o else por enquanto
 	//	else {
 			//tipoComando();
@@ -148,6 +159,7 @@ public class Parser {
 		this.nextoken();
 		this.ponVirgula();
 		this.nextoken();
+		this.comandos();
 
 		//this.comandos(); toda vez q terminar o comando tem chamar a funcao comando pq o comando pode ser chamado mais de uma vez
 
@@ -177,6 +189,14 @@ public class Parser {
 					this.experssaoAritimetica();
 				}
 				
+				if(this.token.getType() == TokenType.REL_OP){
+					this.nextoken();
+				}
+
+				if(this.token.getType() == TokenType.NUMBER || this.token.getType() == TokenType.REALNUMBER){
+					this.nextoken();
+				}
+
 
 			if(this.token.getType() != TokenType.RIGHTPAR){
 				throw new SyntaxException("Expected ')' but, found " + token.getContent());
@@ -274,6 +294,8 @@ public class Parser {
 		this.nextoken();
 		this.ponVirgula();
 		//this.nextoken(); //no futuro chama isso quando tiver mais comandos
+		this.nextoken();
+		this.comandos();
 	}
 
 	public void expressaoRelacional(){
@@ -292,15 +314,27 @@ public class Parser {
 				}
 				
 
+
 			if(this.token.getType() != TokenType.RIGHTPAR){
 				throw new SyntaxException("Expected ')' but, found " + token.getContent());
 			}
+			this.nextoken();
+
+			if(this.token.getContent().equals("AND") || this.token.getContent().equals("OR")){
+				this.operadorBooleano();
+			}else if(this.token.getType() == TokenType.REL_OP){
+				this.operadorRelacional();
+				this.nextoken();
+			}
+			//this.nextoken();
+			//this.nextoken();
 		}
 		this.experssaoAritimetica();
-		this.operadorRelacional();
-		this.nextoken();
-		this.experssaoAritimetica();
-		
+		if(this.token.getType() != TokenType.KEYWORD){
+			this.operadorRelacional();
+			this.nextoken();
+			this.experssaoAritimetica();
+		}
 	//	if(this.token.getType() != TokenType.IDENTYFIER){
 			//this.experssaoAritimetica();
 		//}
@@ -318,7 +352,7 @@ public class Parser {
 
 	public void expressaoRelacional2(){
 		//this.nextoken();
-		if(this.token != null && this.token.getType() != TokenType.KEYWORD){
+		if(this.token != null && this.token.getType() != TokenType.KEYWORD && this.token.getType() != TokenType.RIGHTPAR){
 			this.operadorBooleano();
 			this.expressaoRelacional();
 		}
@@ -341,17 +375,29 @@ public class Parser {
 		// implementar expressaoRelacional 
 		this.nextoken();
 		//if(this.token.getType() != TokenType.IDENTYFIER){
-			this.expressaoRelacional();
+		this.expressaoRelacional();
 		//}
+		if(!this.token.getContent().equals("THEN")){
+			throw new SyntaxException("expected 'THEN', but found " + token.getContent());
+		}
 
+		
 
 		this.nextoken();
 		
+		this.comandos();
+
+		this.comandoCondicao2();
 		
 	}
 
-	public void comandoCondicaoELSE() {
+	public void comandoCondicao2() {
 		// implementar
+		this.nextoken();
+
+		if(this.token != null){
+			this.comandos();
+		}
 	}
 
 	public void comandoRepeticao() {
@@ -359,7 +405,9 @@ public class Parser {
 	}
 
 	public void nextoken() {
-		this.token = this.scanner.nextToken();
+		//if(this.token != null){
+			this.token = this.scanner.nextToken();
+			
 	}
 
 	public void ponVirgula() {
