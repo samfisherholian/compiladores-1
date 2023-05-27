@@ -97,6 +97,9 @@ public class Scanner {
 					else if (this.isPointcolon(currentChar)) {
 						content += currentChar;
 						state = 9;
+					}else if(this.isString(currentChar)){
+						content += currentChar;
+						state = 10;
 					}
 					else {
 						throw new RuntimeException(error() + " symbol not regonized");
@@ -234,10 +237,12 @@ public class Scanner {
 				case 10:
 					if (this.invalidCaractere(currentChar)) {
 						throw new RuntimeException(error() + " String Malformed!");
+					}else if(content.endsWith("\"")){
+						this.back(currentChar);
+						return new Token(TokenType.STRING, content);
 					}
 
-					this.back(currentChar);
-					return new Token(TokenType.STRING, content);
+					
 			}
 		}
 	}
@@ -288,7 +293,7 @@ public class Scanner {
 		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c)
 				&& !this.isAssign(c) && !this.isSpace(c) &&
 				!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c) && !this.isTwopoints(c)
-				&& !this.isPointcolon(c);
+				&& !this.isPointcolon(c) && !this.isString(c);
 	}
 
 	private boolean isLefParentese(char c) {
@@ -318,6 +323,9 @@ public class Scanner {
 
 	private boolean isPointcolon(char c) {
 		return c == ';';
+	}
+	private boolean isString(char c){
+		return c == '\"';
 	}
 
 	private String error() {

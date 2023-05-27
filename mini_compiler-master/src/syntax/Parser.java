@@ -103,6 +103,9 @@ public class Parser {
 
 		if(this.token != null){
 
+			if(this.token.getContent().equals("WHILE") && this.token != null){
+				this.comandoRepeticao();
+			}
 			if(this.token.getContent().equals("IF") && this.token != null){
 				comandoCondicaoIF();
 				this.nextoken();
@@ -122,7 +125,7 @@ public class Parser {
 		}else{
 
 			//quando ele ler o arquivo todo o token fica null, mas msm assim ele verificou todo o arquivo e n encontrou erro
-			System.out.println("Compilation successful!");
+			System.out.println("Compilation successful! aqui");
 			System.exit(0);
 		}	
 		//removi o else por enquanto
@@ -145,6 +148,11 @@ public class Parser {
 
 		if(this.token.getType() != TokenType.KEYWORD){
 			this.nextoken();
+			if(this.token.getType() == TokenType.MATH_OP){
+				this.nextoken();
+				this.experssaoAritimetica();
+			}
+			
 		}
 		
 		if(!this.token.getContent().equals("TO")){
@@ -203,7 +211,13 @@ public class Parser {
 			}
 		}	
 
-		this.nextoken();		
+		this.nextoken();
+		
+		if(this.token.getContent().equals("=")){
+			this.nextoken();
+			this.nextoken();
+			this.nextoken();
+		}
 	}
 
 	public void termoAritimetico2(){
@@ -211,7 +225,8 @@ public class Parser {
 		//this.nextoken();
 		if(this.token != null && !this.token.getContent().equals("TO") && this.token.getType() != TokenType.RIGHTPAR 
 		&& this.token.getType() != TokenType.REL_OP && this.token.getType() != TokenType.KEYWORD
-		&& !this.token.getContent().equals("AND") && !this.token.getContent().equals("OR")){
+		&& !this.token.getContent().equals("AND") && !this.token.getContent().equals("OR")
+		&& !this.token.getContent().equals("=")){
 			termoAritimetico3();
 			termoAritimetico2();
 		}
@@ -281,12 +296,21 @@ public class Parser {
 		}
 
 		this.nextoken();
-		/*    NAO SEI SE "CADEIA" EH ASSIM MSM  */	
+		/*    desse jeito aqui  */	
+		if(this.token.getType() == TokenType.STRING){
+			this.nextoken();
+		}
+
 		if (this.token.getType() != TokenType.IDENTYFIER && this.token.getType() != TokenType.STRING) {
 			throw new SyntaxException("Identyfier or Number expected, found " + token.getType());
 		}
-
+		
 		this.nextoken();
+
+		if(this.token.getType() == TokenType.STRING){
+			this.nextoken();
+		}
+
 		if (this.token.getType() != TokenType.RIGHTPAR) {
 			throw new SyntaxException("Right Parenthesis expected, found " + token.getType());
 		}
@@ -294,8 +318,8 @@ public class Parser {
 		this.nextoken();
 		this.ponVirgula();
 		//this.nextoken(); //no futuro chama isso quando tiver mais comandos
-		this.nextoken();
-		this.comandos();
+		//this.nextoken();
+		//this.comandos();
 	}
 
 	public void expressaoRelacional(){
@@ -330,7 +354,7 @@ public class Parser {
 			//this.nextoken();
 		}
 		this.experssaoAritimetica();
-		if(this.token.getType() != TokenType.KEYWORD){
+		if(this.token.getType() != TokenType.KEYWORD && !this.token.getContent().equals("=")){
 			this.operadorRelacional();
 			this.nextoken();
 			this.experssaoAritimetica();
@@ -352,7 +376,8 @@ public class Parser {
 
 	public void expressaoRelacional2(){
 		//this.nextoken();
-		if(this.token != null && this.token.getType() != TokenType.KEYWORD && this.token.getType() != TokenType.RIGHTPAR){
+		if(this.token != null && this.token.getType() != TokenType.KEYWORD && this.token.getType() != TokenType.RIGHTPAR
+		&& !this.token.getContent().equals("=")){
 			this.operadorBooleano();
 			this.expressaoRelacional();
 		}
@@ -402,6 +427,11 @@ public class Parser {
 
 	public void comandoRepeticao() {
 		// implementar expressaoRelacional
+		this.nextoken();
+		this.expressaoRelacional();
+
+		this.comandos();
+
 	}
 
 	public void nextoken() {
