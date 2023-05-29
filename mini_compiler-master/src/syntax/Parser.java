@@ -92,10 +92,15 @@ public class Parser {
 		}
 
 	public void listaComandos() {
-		this.nextoken();
+		if(!this.token.getContent().equals("IF")){
+			this.nextoken();
+		}
 		if (this.token != null) {
 			comandos();
-			listaComandos();
+			if(this.token != null){
+				listaComandos();
+			}
+			//listaComandos();
 		}
 	}
 
@@ -103,30 +108,25 @@ public class Parser {
 
 		if(this.token != null){
 
-			if(this.token.getContent().equals("WHILE") && this.token != null){
+			if(this.myEqualswithnull("WHILE")){
 				this.comandoRepeticao();
 			}
-			if(this.token.getContent().equals("IF") && this.token != null){
+			if(this.myEqualswithnull("IF")){
 				comandoCondicaoIF();
-				this.nextoken();
+				//this.nextoken();
 			}
-			if(this.token.getContent().equals("ASSIGN") && this.token != null){
+			if(this.myEqualswithnull("ASSIGN")){
 				comandoAtribuicao();
 			}
-			if (this.token.getContent().equals("INPUT") && this.token != null){
+			if (this.myEqualswithnull("INPUT")){
 				comandoEntrada();
 			}
-			if (this.token.getContent().equals("PRINT") && this.token != null){
+			if (this.myEqualswithnull("PRINT")){
 				comandoSaida();
 			}
-			if(this.token.getContent().equals("ELSE") && this.token != null){
+			if(this.myEqualswithnull("ELSE")){
 				this.comandoCondicao2();
 			}
-		}else{
-
-			//quando ele ler o arquivo todo o token fica null, mas msm assim ele verificou todo o arquivo e n encontrou erro
-			System.out.println("Compilation successful! aqui");
-			System.exit(0);
 		}	
 		//removi o else por enquanto
 	//	else {
@@ -136,6 +136,21 @@ public class Parser {
 			//throw new SyntaxException("Expected 'Command' but, found " + token.getContent());
 		//}
 		
+	}
+	
+	/* ESSA FUNCAO FOI BASEADA NESTA AQUI DO STACKOVERFLOW: 
+	https://stackoverflow.com/questions/11011742/java-null-equalsobject-o */
+	public boolean myEqualswithnull(String c){
+		if(this.token != null){
+			if(this.token.getContent().equals(c)){
+				return true;
+			}else{
+				return false;
+			}
+				
+		}else{
+			return false;
+		}
 	}
 
 	public void comandoAtribuicao(){
@@ -166,8 +181,8 @@ public class Parser {
 		}
 		this.nextoken();
 		this.ponVirgula();
-		this.nextoken();
-		this.comandos();
+		//this.nextoken();
+		//this.comandos();
 
 		//this.comandos(); toda vez q terminar o comando tem chamar a funcao comando pq o comando pode ser chamado mais de uma vez
 
@@ -177,6 +192,13 @@ public class Parser {
 		//this.nextoken();
 		termoAritimetico();
 		//experssaoAritimetica2();
+
+	//	if(this.token != null && !this.token.getContent().equals("TO") && this.token.getType() != TokenType.RIGHTPAR 
+	//	&& this.token.getType() != TokenType.REL_OP && this.token.getType() != TokenType.KEYWORD
+	//	&& !this.token.getContent().equals("AND") && !this.token.getContent().equals("OR")
+	//	&& !this.token.getContent().equals("=")){
+	//		this.nextoken();
+	//	}
 	}
 
 	public void termoAritimetico(){
@@ -210,8 +232,11 @@ public class Parser {
 				throw new SyntaxException("Expected ')' but, found " + token.getContent());
 			}
 		}	
+		
 
 		this.nextoken();
+		
+			
 		
 		if(this.token.getContent().equals("=")){
 			this.nextoken();
@@ -408,11 +433,14 @@ public class Parser {
 
 		
 
-		this.nextoken();
+		//this.nextoken();
 		
-		this.comandos();
-
-		this.comandoCondicao2();
+		this.listaComandos();
+		
+		if(this.token != null){
+			this.comandoCondicao2();
+		}
+//this.comandoCondicao2();
 		
 	}
 
@@ -421,7 +449,8 @@ public class Parser {
 		this.nextoken();
 
 		if(this.token != null){
-			this.comandos();
+			//this.comandos();
+			this.listaComandos();
 		}
 	}
 
@@ -430,7 +459,10 @@ public class Parser {
 		this.nextoken();
 		this.expressaoRelacional();
 
-		this.comandos();
+		//if(this.token = this.scanner.back(this.token.getContent()))
+
+		//this.comandos();
+		this.listaComandos();
 
 	}
 

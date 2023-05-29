@@ -15,7 +15,7 @@ public class Scanner {
 	int state;
 	int pointCounter;
 
-	String[] keyWords = { "PRINT", "INT", "FLOAT", "IF", "ELSE", "THEN", "TO", "DECLARACOES", "ALGORITMO" };
+	String[] keyWords = { "PRINT", "INT", "FLOAT", "IF", "ELSE", "THEN", "TO", "DECLARACOES", "ALGORITMO", "ASSIGN" };
 
 	LineColum contadorLC = new LineColum();
 
