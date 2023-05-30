@@ -25,7 +25,7 @@ public class Parser {
 		
 		this.nextoken();
 		if (!this.token.getContent().equals("DECLARACOES")) {
-			throw new SyntaxException("Expected 'DECLARACOES', found " + token.getType());
+			throw new SyntaxException(this.erroSyntax() + "" +"Expected 'DECLARACOES', found " + token.getType());
 		}
 		listaDeclaracoes();
 
@@ -80,6 +80,8 @@ public class Parser {
 		if (this.token.getType() != TokenType.IDENTYFIER) {
 			throw new SyntaxException("Identyfier or Number expected, found " + token.getType());
 		}
+		//tipoVar();
+	
 		this.nextoken();
 		this.ponVirgula();
 
@@ -87,7 +89,7 @@ public class Parser {
 
 	public void tipoVar() {
 			if (!this.token.getContent().equals("INTEIRO") && !this.token.getContent().equals("REAL")) {
-				throw new SyntaxException("Expected 'INTEIRO' OR 'REAL' but, found " + token.getContent());
+				throw new SyntaxException(this.erroSyntax() + " " +"Expected 'INTEIRO' OR 'REAL' but, found " + token.getContent());
 			}
 		}
 
@@ -142,6 +144,7 @@ public class Parser {
 	https://stackoverflow.com/questions/11011742/java-null-equalsobject-o */
 	public boolean myEqualswithnull(String c){
 		if(this.token != null){
+			//compara a string
 			if(this.token.getContent().equals(c)){
 				return true;
 			}else{
@@ -353,7 +356,7 @@ public class Parser {
 	}
 
 	public void termoRelacional(){
-
+/* 
 		if(this.token.getType() == TokenType.LEFTPAR){
 		
 				
@@ -378,6 +381,7 @@ public class Parser {
 			//this.nextoken();
 			//this.nextoken();
 		}
+		*/
 		this.experssaoAritimetica();
 		if(this.token.getType() != TokenType.KEYWORD && !this.token.getContent().equals("=")){
 			this.operadorRelacional();
@@ -470,6 +474,10 @@ public class Parser {
 		//if(this.token != null){
 			this.token = this.scanner.nextToken();
 			
+	}
+
+	public String erroSyntax(){
+		return this.scanner.error();
 	}
 
 	public void ponVirgula() {

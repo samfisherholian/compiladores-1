@@ -328,7 +328,7 @@ public class Scanner {
 		return c == '\"';
 	}
 
-	private String error() {
+	public String error() {
 		return "erro in line " + contadorLC.getLine() + " column " + contadorLC.getColum();
 	}
 
