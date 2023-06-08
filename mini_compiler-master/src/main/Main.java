@@ -11,7 +11,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			Scanner scanner = new Scanner("codigo_fonte_do_AS_feito_em_sala.mc");
+			Scanner scanner = new Scanner("codigo_fonte_que_deve_rodar_apos_a_implementacao.mc");
 			Parser parser = new Parser(scanner);
 			parser.program();
 			System.out.println("Compilation successful!");

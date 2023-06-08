@@ -1,17 +1,18 @@
 programa : 
-	':' 'DECLARACOES' listaDeclaracoes ';'
+	':' 'DECLARACOES' listaDeclaracoes
 	':' 'ALGORITMO' listaComandos ';' ;
 
 listaDeclaracoes : 
-	declaracao listaDeclaracoes2 ';';
-listaDeclaracoes2 : 
-	VAZIO | listaDeclaracoes;
+	declaracao listaDeclaracoes | VAZIO;
 
 declaracao : 
-	tipoVar ':' VARIAVEL;
-
+	varLista ':' tipoVar ';';
+	
 tipoVar : 
 	'INTEIRO' | 'REAL';
+
+varLista:
+	VARIAVEL, varLista | VARIAVEL;
 
 expressaoAritmetica:
 	termoAritmetico expressaoAritmetica2 ';'
@@ -67,10 +68,9 @@ comandoSaida :
 	'PRINT'  (VARIAVEL | CADEIA);
 
 comandoCondicao : 
-	'IF' expressaoRelacional 'THEN' comando comandoCondicao2 ';' ;
+	'IF' expressaoRelacional 'THEN' listaComandos comandoCondicao2 ';' ;
 comandoCondicao2 : 
-	'ELSE' comando | VAZIO;
+	'ELSE' listaComandos | VAZIO;
 
 comandoRepeticao : 
-	'WHILE' expressaoRelacional comando;
-
+	'WHILE' expressaoRelacional listaComandos;

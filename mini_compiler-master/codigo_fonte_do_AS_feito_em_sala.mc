@@ -1,8 +1,9 @@
 :DECLARACOES
-INTEIRO:numero1;
-INTEIRO:numero2;
-INTEIRO:numero3;
-INTEIRO:aux;
+numero1,numero2:INTEIRO;
+numero1:INTEIRO;
+numero2:INTEIRO;
+numero3:INTEIRO;
+aux:INTEIRO;
 
 :ALGORITMO
 # Coloca 3 números em ordem crescente
@@ -28,7 +29,7 @@ PRINT(numero3);
 # Exemplo de loop
 ASSIGN 0 TO aux;
 WHILE aux<3
-    IF aux == 1 THEN
+    ASSIGN aux TO numero1;
         PRINT("UM");
 	ELSE 
 	    IF aux == 2 THEN

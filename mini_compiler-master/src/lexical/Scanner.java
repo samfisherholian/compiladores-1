@@ -100,6 +100,9 @@ public class Scanner {
 					}else if(this.isString(currentChar)){
 						content += currentChar;
 						state = 10;
+					}else if(this.isVirgula(currentChar)){
+						content += currentChar;
+						state = 11;
 					}
 					else {
 						throw new RuntimeException(error() + " symbol not regonized");
@@ -241,7 +244,13 @@ public class Scanner {
 						this.back(currentChar);
 						return new Token(TokenType.STRING, content);
 					}
-
+				case 11:
+					if(this.invalidCaractere(currentChar)){
+						throw new RuntimeException(error() + " virgula Malformed!");
+					}else{
+						this.back(currentChar);
+						return new Token(TokenType.VIRGULA, content);
+					}		
 					
 			}
 		}
@@ -293,7 +302,7 @@ public class Scanner {
 		return !this.isLetter(c) && !this.isDigit(c) && !this.isOperator(c) && !this.isMathOp(c)
 				&& !this.isAssign(c) && !this.isSpace(c) &&
 				!this.isLefParentese(c) && !this.isRightParentese(c) && !this.isDot(c) && !this.isTwopoints(c)
-				&& !this.isPointcolon(c) && !this.isString(c);
+				&& !this.isPointcolon(c) && !this.isString(c) && !this.isVirgula(c);
 	}
 
 	private boolean isLefParentese(char c) {
@@ -328,6 +337,9 @@ public class Scanner {
 		return c == '\"';
 	}
 
+	private boolean isVirgula(char c){
+		return c == ',';
+	}
 	public String error() {
 		return "erro in line " + contadorLC.getLine() + " column " + contadorLC.getColum();
 	}
